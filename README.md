@@ -23,7 +23,7 @@ for those who don't use `docker` on a regular basis).
 
 ```
 $ docker build \
->   --file python-multi.Dockerfile \
+>   --file src/Dockerfile \
 >   --tag dhermes/python-multi:latest \
 >   .
 $ docker run \
