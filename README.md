@@ -26,16 +26,12 @@ $ docker build \
 >   --file python-multi.Dockerfile \
 >   --tag dhermes/python-multi:latest \
 >   .
-$ docker build \
->   --file bezier.Dockerfile \
->   --tag dhermes/bezier:latest \
->   .
 $ docker run \
 >   --rm \
 >   --tty \
 >   --interactive \
->   --volume $(git rev-parse --show-toplevel):/var/code/bezier/ \
->   dhermes/bezier:latest \
+>   --volume $(git rev-parse --show-toplevel):/var/code/ \
+>   dhermes/python-multi:latest \
 >   /bin/bash
 ```
 
