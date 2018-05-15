@@ -7,7 +7,7 @@ image with multiple Python versions installed.
 
 The "Short Description" on Docker Hub should read:
 
-> Multiple Python versions installed into Ubuntu LTS (16.04 as of January 2018)
+> Multiple Python versions installed into Ubuntu LTS (18.04 as of May 2018)
 
 This is provided here as a back-up (i.e. in case the short
 description is overwritten).
