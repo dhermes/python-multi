@@ -30,17 +30,17 @@ RUN apt-get update \
   && rm -f /var/cache/apt/archives/*.deb
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.4; do \
+RUN for PYTHON_VERSION in 2.7.15 3.5.5 3.6.5; do \
   set -ex \
     && wget --no-check-certificate -O python-${PYTHON_VERSION}.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
     && wget --no-check-certificate -O python-${PYTHON_VERSION}.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
     && export GNUPGHOME="$(mktemp -d)" \
     && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys \
-      # 2.7.14 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/2.7/stretch/Dockerfile#L16)
+      # 2.7.15 (REF: https://github.com/docker-library/python/blob/dd864c1f145a6e1282e2e278cd8a9c649e9a8841/2.7/stretch/Dockerfile#L18)
       C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF \
-      # 3.5.4 (REF: https://github.com/docker-library/python/blob/0b0fb40ad8aaa4c6f57192300b2ab61dd481ce86/3.5/jessie/Dockerfile#L22)
+      # 3.5.5 (REF: https://github.com/docker-library/python/blob/dd864c1f145a6e1282e2e278cd8a9c649e9a8841/3.5/jessie/Dockerfile#L22)
       97FC712E4C024BBEA48A61ED3A5CA953F73C700D \
-      # 3.6.4 (REF: https://github.com/docker-library/python/blob/2f73f58fb5ad731616109e0b8ed6367a0d474c52/3.6/stretch/Dockerfile#L22)
+      # 3.6.5 (REF: https://github.com/docker-library/python/blob/dd864c1f145a6e1282e2e278cd8a9c649e9a8841/3.6/stretch/Dockerfile#L22)
       0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D \
     && gpg --batch --verify python-${PYTHON_VERSION}.tar.xz.asc python-${PYTHON_VERSION}.tar.xz \
     && rm -r "$GNUPGHOME" python-${PYTHON_VERSION}.tar.xz.asc \
@@ -60,25 +60,26 @@ RUN for PYTHON_VERSION in 2.7.14 3.5.4 3.6.4; do \
   && rm -rf /usr/src/python* \
   && rm -rf ~/.cache/
 
-# REF: https://github.com/docker-library/pypy/blob/a530900865836dcb7eef819e48e6b969fc698217/2/Dockerfile
-ENV PYPY_VERSION 5.10.0
+# REF: https://github.com/docker-library/pypy/blob/802584a66147dbd17a800df709124afeaa203a90/2/Dockerfile
+ENV PYPY_VERSION 6.0.0
 RUN set -ex; \
   \
 # this "case" statement is generated via "update.sh"
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
 # amd64
-    amd64) pypyArch='linux64'; sha256='da85af9240220179493ad66c857934dc7ea91aef8f168cd293a2d99af8346ee2' ;; \
+    amd64) pypyArch='linux64'; sha256='6cbf942ba7c90f504d8d6a2e45d4244e3bf146c8722d64e9410b85eac6b5af67' ;; \
 # arm32v5
-    armel) pypyArch='linux-armel'; sha256='6fdd55dd8f674efd06f76edb60a09a03b9b04a5fbc56741f416a94a0b9d2ff91' ;; \
+    armel) pypyArch='linux-armel'; sha256='924ca3f90aa28e8961859508c25752c95253b842318a0f267267ffe90f56a916' ;; \
 # i386
-    i386) pypyArch='linux32'; sha256='a2431a9e4ef879da1a2b56b111013b4a6efb87d4173a37bf650de47834ac5fe' ;; \
+    i386) pypyArch='linux32'; sha256='ad1082d4328ae8f32617b14628648583b82b6d29df3aa42b97bd1853c08c4bc8' ;; \
     *) echo >&2 "error: current architecture ($dpkgArch) does not have a corresponding PyPy $PYPY_VERSION binary release"; exit 1 ;; \
   esac; \
   \
   wget -O pypy.tar.bz2 "https://bitbucket.org/pypy/pypy/downloads/pypy2-v${PYPY_VERSION}-${pypyArch}.tar.bz2"; \
   echo "$sha256 *pypy.tar.bz2" | sha256sum -c; \
   tar -xjC /usr/local --strip-components=1 -f pypy.tar.bz2; \
+  find /usr/local/lib-python -depth -type d -a \( -name test -o -name tests \) -exec rm -rf '{}' +; \
   rm pypy.tar.bz2; \
   \
   pypy --version
@@ -86,18 +87,24 @@ RUN set -ex; \
 # Install pip on Python 3.6 only.
 # If the environment variable is called "PIP_VERSION", pip explodes with
 # "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 9.0.1
-RUN wget --no-check-certificate -O /tmp/get-pip.py 'https://bootstrap.pypa.io/get-pip.py' \
-  && python3.6 /tmp/get-pip.py "pip==$PYTHON_PIP_VERSION" \
-  && rm /tmp/get-pip.py \
-
-  # we use "--force-reinstall" for the case where the version of pip we're trying to install is the same as the version bundled with Python
-  # ("Requirement already up-to-date: pip==8.1.2 in /usr/local/lib/python3.6/site-packages")
-  # https://github.com/docker-library/python/pull/143#issuecomment-241032683
-  && python3.6 -m pip install --no-cache-dir --upgrade --force-reinstall "pip==$PYTHON_PIP_VERSION" \
-
-  # then we use "pip list" to ensure we don't have more than one pip version installed
-  # https://github.com/docker-library/python/pull/100
-  && [ "$(python3.6 -m pip list |tac|tac| awk -F '[ ()]+' '$1 == "pip" { print $2; exit }')" = "$PYTHON_PIP_VERSION" ]
+ENV PYTHON_PIP_VERSION 10.0.1
+RUN set -ex; \
+  \
+  wget -O get-pip.py 'https://bootstrap.pypa.io/get-pip.py'; \
+  \
+  python3.6 get-pip.py \
+    --disable-pip-version-check \
+    --no-cache-dir \
+    "pip==$PYTHON_PIP_VERSION" \
+  ; \
+  pip --version; \
+  \
+  find /usr/local -depth \
+    \( \
+      \( -type d -a \( -name test -o -name tests \) \) \
+      -o \
+      \( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
+    \) -exec rm -rf '{}' +; \
+  rm -f get-pip.py
 
 CMD ["python3.6"]
