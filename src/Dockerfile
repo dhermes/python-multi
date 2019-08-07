@@ -31,20 +31,16 @@ RUN apt-get update \
 # Install ``pyenv``.
 RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
 
-# Install the desired versions of Python, in order of
-# lowest precedence to highest.
-RUN for PYTHON_VERSION in 2.7.15 3.5.5 3.6.6 3.7.0 pypy2.7-6.0.0 pypy3.5-6.0.0; do \
+# Install the desired versions of Python.
+RUN for PYTHON_VERSION in 3.6.9 3.7.4 pypy3.6-7.1.1; do \
   set -ex \
     && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
 
 # Add to PATH, in order of lowest precedence to highest.
-ENV PATH /root/.pyenv/versions/pypy3.5-6.0.0/bin:${PATH}
-ENV PATH /root/.pyenv/versions/pypy2.7-6.0.0/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.5.5/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.7.0/bin:${PATH}
-ENV PATH /root/.pyenv/versions/2.7.15/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.6.6/bin:${PATH}
+ENV PATH /root/.pyenv/versions/pypy3.6-7.1.1/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.6.9/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.7.4/bin:${PATH}
 
-CMD ["python3.6"]
+CMD ["python3.7"]
