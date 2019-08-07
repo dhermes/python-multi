@@ -2,10 +2,6 @@ FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# At the moment, setting "LANG=C" on a Linux system fundamentally breaks
-# Python 3. (http://bugs.python.org/issue19846)
-ENV LANG C.UTF-8
-
 # Install dependencies.
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
