@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 as base
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -37,6 +37,10 @@ RUN for PYTHON_VERSION in 3.6.9 3.7.5 3.8.0 pypy3.6-7.2.0; do \
     && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
+
+FROM ubuntu:18.04
+
+COPY --from=base /root/.pyenv /root/.pyenv
 
 # Add to PATH, in order of lowest precedence to highest.
 ENV PATH /root/.pyenv/versions/pypy3.6-7.2.0/bin:${PATH}
