@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -32,16 +32,16 @@ RUN apt-get update \
 RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 3.6.9 3.7.5 3.8.0 pypy3.6-7.2.0; do \
+RUN for PYTHON_VERSION in 3.7.9 3.8.7 3.9.1 pypy3.7-7.3.3; do \
   set -ex \
     && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
 
 # Add to PATH, in order of lowest precedence to highest.
-ENV PATH /root/.pyenv/versions/pypy3.6-7.2.0/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.6.9/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.7.5/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.8.0/bin:${PATH}
+ENV PATH /root/.pyenv/versions/pypy3.7-7.3.3/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.7.9/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.8.7/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.9.1/bin:${PATH}
 
-CMD ["python3.8"]
+CMD ["python3.9"]
