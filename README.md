@@ -9,7 +9,7 @@ The Dockerfile uses `pyenv` to install the included Python versions.
 
 The "Short Description" on Docker Hub should read:
 
-> Multiple Python versions installed into Ubuntu LTS (20.04 as of February 2021)
+> Multiple Python versions installed into Ubuntu LTS (20.04 as of October 2021)
 
 This is provided here as a back-up (i.e. in case the short
 description is overwritten).
