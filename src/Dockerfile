@@ -32,15 +32,14 @@ RUN apt-get update \
 RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 3.7.12 3.8.12 3.9.7 3.10.0 pypy3.7-7.3.5; do \
+RUN for PYTHON_VERSION in 3.8.12 3.9.7 3.10.0 pypy3.8-7.3.7; do \
   set -ex \
     && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
 
 # Add to PATH, in order of lowest precedence to highest.
-ENV PATH /root/.pyenv/versions/pypy3.7-7.3.5/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.7.12/bin:${PATH}
+ENV PATH /root/.pyenv/versions/pypy3.8-7.3.7/bin:${PATH}
 ENV PATH /root/.pyenv/versions/3.8.12/bin:${PATH}
 ENV PATH /root/.pyenv/versions/3.9.7/bin:${PATH}
 ENV PATH /root/.pyenv/versions/3.10.0/bin:${PATH}
