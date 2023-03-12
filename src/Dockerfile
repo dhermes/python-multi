@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -32,16 +32,17 @@ RUN apt-get update \
 RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 3.8.12 3.9.7 3.10.0 pypy3.8-7.3.7; do \
+RUN for PYTHON_VERSION in 3.8.16 3.9.16 3.10.10 3.11.2 pypy3.9-7.3.11; do \
   set -ex \
     && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
 
 # Add to PATH, in order of lowest precedence to highest.
-ENV PATH /root/.pyenv/versions/pypy3.8-7.3.7/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.8.12/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.9.7/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.10.0/bin:${PATH}
+ENV PATH /root/.pyenv/versions/pypy3.9-7.3.11/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.8.16/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.9.16/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.10.10/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.11.2/bin:${PATH}
 
-CMD ["python3.10"]
+CMD ["python3.11"]
