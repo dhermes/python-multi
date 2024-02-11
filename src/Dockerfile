@@ -32,17 +32,18 @@ RUN apt-get update \
 RUN git clone https://github.com/pyenv/pyenv /root/.pyenv
 
 # Install the desired versions of Python.
-RUN for PYTHON_VERSION in 3.8.16 3.9.16 3.10.10 3.11.2 pypy3.9-7.3.11; do \
+RUN for PYTHON_VERSION in 3.8.18 3.9.18 3.10.13 3.11.8 3.12.2 pypy3.9-7.3.15; do \
   set -ex \
     && /root/.pyenv/bin/pyenv install ${PYTHON_VERSION} \
     && /root/.pyenv/versions/${PYTHON_VERSION}/bin/python -m pip install --upgrade pip \
   ; done
 
 # Add to PATH, in order of lowest precedence to highest.
-ENV PATH /root/.pyenv/versions/pypy3.9-7.3.11/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.8.16/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.9.16/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.10.10/bin:${PATH}
-ENV PATH /root/.pyenv/versions/3.11.2/bin:${PATH}
+ENV PATH /root/.pyenv/versions/pypy3.9-7.3.15/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.8.18/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.9.18/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.10.13/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.11.8/bin:${PATH}
+ENV PATH /root/.pyenv/versions/3.12.2/bin:${PATH}
 
-CMD ["python3.11"]
+CMD ["python3.12"]
