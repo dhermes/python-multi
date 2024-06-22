@@ -21,6 +21,39 @@ this directory. Some of them are just generic `docker` commands
 for making sure the local system is in a good state (useful
 for those who don't use `docker` on a regular basis).
 
+### Combine multiple architectures
+
+Via [Multi-arch build and images, the simple way][2]:
+
+```bash
+docker build \
+  --file src/Dockerfile \
+  --platform linux/amd64 \
+  --tag dhermes/python-multi:1.YYYYMMDD.1-amd64 \
+  .
+
+docker build \
+  --file src/Dockerfile \
+  --platform linux/arm64 \
+  --tag dhermes/python-multi:1.YYYYMMDD.1-arm64 \
+  .
+
+docker manifest create \
+  dhermes/python-multi:1.YYYYMMDD.1 \
+  --amend dhermes/python-multi:1.YYYYMMDD.1-amd64 \
+  --amend dhermes/python-multi:1.YYYYMMDD.1-arm64
+
+docker manifest push dhermes/python-multi:1.YYYYMMDD.1
+
+
+docker manifest create \
+  dhermes/python-multi:latest \
+  --amend dhermes/python-multi:1.YYYYMMDD.N-amd64 \
+  --amend dhermes/python-multi:1.YYYYMMDD.N-arm64
+
+docker manifest push dhermes/python-multi:latest
+```
+
 ### Specific
 
 ```
@@ -49,3 +82,4 @@ $ docker image rm ${REPOSITORY}:${TAG}
 ```
 
 [1]: https://hub.docker.com/r/dhermes/python-multi/
+[2]: https://www.docker.com/blog/multi-arch-build-and-images-the-simple-way/
