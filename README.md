@@ -29,22 +29,30 @@ Via [Multi-arch build and images, the simple way][2]:
 docker build \
   --file src/Dockerfile \
   --platform linux/amd64 \
-  --tag dhermes/python-multi:1.YYYYMMDD.1-amd64 \
+  --tag dhermes/python-multi:1.YYYYMMDD.N-amd64 \
   .
 
 docker build \
   --file src/Dockerfile \
   --platform linux/arm64 \
-  --tag dhermes/python-multi:1.YYYYMMDD.1-arm64 \
+  --tag dhermes/python-multi:1.YYYYMMDD.N-arm64 \
   .
 
+# NOTE: Tags must be pushed for `docker manifest create` to find them, they
+#       can later be removed.
+docker push dhermes/python-multi:1.YYYYMMDD.N-amd64
+docker push dhermes/python-multi:1.YYYYMMDD.N-arm64
+
+############################################################
+
 docker manifest create \
-  dhermes/python-multi:1.YYYYMMDD.1 \
-  --amend dhermes/python-multi:1.YYYYMMDD.1-amd64 \
-  --amend dhermes/python-multi:1.YYYYMMDD.1-arm64
+  dhermes/python-multi:1.YYYYMMDD.N \
+  --amend dhermes/python-multi:1.YYYYMMDD.N-amd64 \
+  --amend dhermes/python-multi:1.YYYYMMDD.N-arm64
 
-docker manifest push dhermes/python-multi:1.YYYYMMDD.1
+docker manifest push dhermes/python-multi:1.YYYYMMDD.N
 
+############################################################
 
 docker manifest create \
   dhermes/python-multi:latest \
